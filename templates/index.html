@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load Balancer Dashboard</title>
+    <script>
+        function updateStatus() {
+            fetch('/status')
+                .then(response => response.json())
+                .then(data => {
+                    let serverList = document.getElementById("server-list");
+                    serverList.innerHTML = "";
+
+                    for (let server in data.servers) {
+                        let load = data.servers[server].toFixed(2);
+                        serverList.innerHTML += `<li>${server} - Carga: <b>${load}%</b></li>`;
+                    }
+
+                    let historyList = document.getElementById("history-list");
+                    historyList.innerHTML = "";
+                    data.history.forEach(item => {
+                        historyList.innerHTML += `<li>${item}</li>`;
+                    });
+                });
+        }
+
+        setInterval(updateStatus, 2000);
+    </script>
+</head>
+<body onload="updateStatus()">
+    <h2>📊 Estado de los Servidores</h2>
+    <ul id="server-list"></ul>
+
+    <h2>📜 Historial de Redirecciones</h2>
+    <ul id="history-list"></ul>
+</body>
+</html>
